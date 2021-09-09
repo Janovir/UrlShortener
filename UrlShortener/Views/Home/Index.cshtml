@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "URL Shortener";
+}
+
+<div class="col-lg-12">
+    <label>Old Url</label><br />
+    <textarea id="origUrl" rows="5" placeholder="Enter your URL. This must include 'http://' or 'https://' at the beginning" style="width:50%"></textarea><br />
+    <label id="errorMessage" style="color:red"></label>
+</div>
+<div class="col-lg-12">
+    <label>New Url</label><br />
+    <input id="shortUrl" placeholder="" style="width:50%" /><br />
+</div>
+<br />
+<div class="col-lg-12">
+    <label>Expires</label><br />
+    <label id="expiryDate"></label><br />
+</div>
+<br />
+<div class="col-lg-12">
+    <button onclick="getShortUrl()">Get URL</button>
+</div>
+
+<script>
+    function getShortUrl() {
+        var data = $("#origUrl").val();
+        clearData();
+
+        $.ajax({
+            url: '/Home/GetShortenedUrl',
+            type: 'Post',
+            data: { originalUrl: data },
+            datatype: "text",
+            success: function (newUrl) {
+                $('#shortUrl').val(newUrl.shortenedUrl);
+                $('#expiryDate').text(newUrl.formattedExpiryDate);
+            },
+            error: function (error) {
+                $('#errorMessage').text(error.responseText);
+            }
+        })
+    }
+
+    function clearData() {
+        $('#shortUrl').val("");
+        $('#expiryDate').text("");
+        $('#errorMessage').text("");
+    }
+</script>
+
